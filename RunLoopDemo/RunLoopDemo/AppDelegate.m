@@ -8,15 +8,21 @@
 
 #import "AppDelegate.h"
 
+NSNotificationName const HYLiveAppDidEnterBackgroundNotification = @"HYLiveAppDidEnterBackgroundNotification";
+
 @interface AppDelegate ()
 
 @end
 
 @implementation AppDelegate
 
+//UIView *view0;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+//    [NSRunLoop currentRunLoop];
+//    view0 = [[UIView alloc] init];
+//    NSLog(@"controller %@", view0);
     return YES;
 }
 
@@ -30,6 +36,7 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    [[NSNotificationCenter defaultCenter] postNotificationName:HYLiveAppDidEnterBackgroundNotification object:nil];
 }
 
 
