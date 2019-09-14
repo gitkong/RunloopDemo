@@ -22,7 +22,10 @@ UIKIT_EXTERN NSNotificationName const HYLiveAppDidEnterBackgroundNotification;
 @property (nonatomic, strong) UIButton *btn;
 @end
 
-@implementation ViewController
+@implementation ViewController {
+    dispatch_semaphore_t _semaphore;
+    int _index;
+}
 
 TestDeallocModel *globalModel;
 
@@ -48,22 +51,55 @@ TestDeallocModel *globalModel;
 //    }];
 //    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
     
-    self.btn = [[UIButton alloc] initWithFrame:CGRectMake(200, 300, 100, 100)];
-    [self.btn setBackgroundColor:[UIColor blueColor]];
-    [self.btn addTarget:self action:@selector(click) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.btn];
+//    self.btn = [[UIButton alloc] initWithFrame:CGRectMake(200, 300, 100, 100)];
+//    [self.btn setBackgroundColor:[UIColor blueColor]];
+//    [self.btn addTarget:self action:@selector(click) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:self.btn];
     
     
 //    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 //        [self click];
 //    });
+    if (!_semaphore) {
+        _semaphore = dispatch_semaphore_create(1);
+    }
+    
+//    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
+//        dispatch_semaphore_wait(self->_semaphore, DISPATCH_TIME_FOREVER);
+//
+//        NSLog(@"index = %d", self->_index);
+//
+//        dispatch_semaphore_signal(self->_semaphore);
+//    }];
+//    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
+//
+//    NSTimer *timer1 = [NSTimer scheduledTimerWithTimeInterval:0.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
+//        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+////            for (int index = 0; index < 100; index++) {
+////                @autoreleasepool {
+////
+////                }
+////            }
+//            NSLog(@"step 1");
+//            dispatch_semaphore_wait(self->_semaphore, DISPATCH_TIME_FOREVER);
+//            NSLog(@"step 2");
+//            self->_index++;
+//
+//            dispatch_semaphore_signal(self->_semaphore);
+//            NSLog(@"step 3");
+//        });
+//    }];
+//    [[NSRunLoop currentRunLoop] addTimer:timer1 forMode:NSRunLoopCommonModes];
+    
+    
     
     NSLog(@"VC initModel thread:%@", [NSThread currentThread]);
     self.propertyModel = [[TestDeallocModel alloc] init];
     
     // 主线程销毁，则dealloc中使用dispatch_async 或者 dispatch_get_main_queue() 都会crash
+    __weak typeof(self) weakSelf = self;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self releaseModel];
+        [weakSelf releaseModel];
     });
     
     /*
