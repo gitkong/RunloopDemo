@@ -17,6 +17,9 @@
 		3F38BCF1230685E200087D1C /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = 3F38BCF0230685E200087D1C /* Person.m */; };
 		3FABB32F231E03100066AC4E /* TestDeallocModel+Test.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FABB32E231E03100066AC4E /* TestDeallocModel+Test.m */; };
 		3FABB332231E05A70066AC4E /* TestDeallocAssociatedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FABB331231E05A70066AC4E /* TestDeallocAssociatedObject.m */; };
+		3FF32F3A232E1E15001787F7 /* TestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF32F39232E1E15001787F7 /* TestModel.m */; };
+		3FF32F3C232E1E5C001787F7 /* TestModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FF32F3B232E1E5B001787F7 /* TestModel.cpp */; };
+		3FF32F42232E2E66001787F7 /* SubModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FF32F41232E2E66001787F7 /* SubModel.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +41,11 @@
 		3FABB32E231E03100066AC4E /* TestDeallocModel+Test.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "TestDeallocModel+Test.m"; sourceTree = "<group>"; };
 		3FABB330231E05A70066AC4E /* TestDeallocAssociatedObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestDeallocAssociatedObject.h; sourceTree = "<group>"; };
 		3FABB331231E05A70066AC4E /* TestDeallocAssociatedObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestDeallocAssociatedObject.m; sourceTree = "<group>"; };
+		3FF32F38232E1E15001787F7 /* TestModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestModel.h; sourceTree = "<group>"; };
+		3FF32F39232E1E15001787F7 /* TestModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestModel.m; sourceTree = "<group>"; };
+		3FF32F3B232E1E5B001787F7 /* TestModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestModel.cpp; sourceTree = "<group>"; };
+		3FF32F40232E2E66001787F7 /* SubModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SubModel.h; sourceTree = "<group>"; };
+		3FF32F41232E2E66001787F7 /* SubModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SubModel.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +90,11 @@
 				3FABB32E231E03100066AC4E /* TestDeallocModel+Test.m */,
 				3FABB330231E05A70066AC4E /* TestDeallocAssociatedObject.h */,
 				3FABB331231E05A70066AC4E /* TestDeallocAssociatedObject.m */,
+				3FF32F38232E1E15001787F7 /* TestModel.h */,
+				3FF32F39232E1E15001787F7 /* TestModel.m */,
+				3FF32F3B232E1E5B001787F7 /* TestModel.cpp */,
+				3FF32F40232E2E66001787F7 /* SubModel.h */,
+				3FF32F41232E2E66001787F7 /* SubModel.m */,
 				3F34336A22DC554E00202B5E /* Main.storyboard */,
 				3F34336D22DC555000202B5E /* Assets.xcassets */,
 				3F34336F22DC555000202B5E /* LaunchScreen.storyboard */,
@@ -168,6 +181,9 @@
 				3F38BCF1230685E200087D1C /* Person.m in Sources */,
 				3F3398F1231B876C0091487C /* TestDeallocModel.m in Sources */,
 				3F34336622DC554E00202B5E /* AppDelegate.m in Sources */,
+				3FF32F3A232E1E15001787F7 /* TestModel.m in Sources */,
+				3FF32F42232E2E66001787F7 /* SubModel.m in Sources */,
+				3FF32F3C232E1E5C001787F7 /* TestModel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

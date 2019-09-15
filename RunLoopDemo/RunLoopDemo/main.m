@@ -10,13 +10,12 @@
 #import "AppDelegate.h"
 /*
  typedef CF_OPTIONS(CFOptionFlags, CFRunLoopActivity) {
- kCFRunLoopEntry = (1UL << 0),
- kCFRunLoopBeforeTimers = (1UL << 1),
- kCFRunLoopBeforeSources = (1UL << 2),
- kCFRunLoopBeforeWaiting = (1UL << 5),
- kCFRunLoopAfterWaiting = (1UL << 6),
- kCFRunLoopExit = (1UL << 7),
- kCFRunLoopAllActivities = 0x0FFFFFFFU
+ kCFRunLoopEntry         = (1UL << 0), // 即将进入Loop
+ kCFRunLoopBeforeTimers  = (1UL << 1), // 即将处理 Timer
+ kCFRunLoopBeforeSources = (1UL << 2), // 即将处理 Source
+ kCFRunLoopBeforeWaiting = (1UL << 5), // 即将进入休眠
+ kCFRunLoopAfterWaiting  = (1UL << 6), // 刚从休眠中唤醒
+ kCFRunLoopExit          = (1UL << 7), // 即将退出Loop
  };
  */
 void TestCFRunLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info) {
@@ -46,9 +45,10 @@ void TestCFRunLoopObserverCallBack(CFRunLoopObserverRef observer, CFRunLoopActiv
 
 int main(int argc, char * argv[]) {
     @autoreleasepool {
-//        CFRunLoopObserverRef observer = CFRunLoopObserverCreate(CFAllocatorGetDefault(), kCFRunLoopAllActivities, YES, 0, TestCFRunLoopObserverCallBack, NULL);
-//        CFRunLoopAddObserver(CFRunLoopGetMain(), observer, kCFRunLoopCommonModes);
-//        CFRelease(observer);
+        CFRunLoopObserverRef observer = CFRunLoopObserverCreate(CFAllocatorGetDefault(), kCFRunLoopBeforeSources, YES, 0, TestCFRunLoopObserverCallBack, NULL);
+        CFRunLoopAddObserver(CFRunLoopGetMain(), observer, kCFRunLoopCommonModes);
+        CFRelease(observer);
+        NSLog(@"Main, thread:%@, queue:%@", [NSThread currentThread], dispatch_get_current_queue());
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }
 }

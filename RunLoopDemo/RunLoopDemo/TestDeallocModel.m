@@ -19,69 +19,6 @@ static char *KTestDeallocAssociatedObjectKey = "KTestDeallocAssociatedObjectKey"
 @end
 
 @implementation TestDeallocModel
-/*
- dispatch_async不阻塞当前线程
- 
- dispatch_sync阻塞当前线程
- 
- 主线程有一个特点：主线程会先执行主线程上的代码片段，然后才会去执行放在主队列中的任务。
- 
- 同步执行  dispatch_sync函数的特点：该函数只有在该函数中被添加到某队列的某方法执行完毕之后才会返回。即 方法会等待 task 执行完再返回
- */
-- (void)dealloc {
-    NSLog(@"TestDeallocModel dealloc:%p, thread:%@", self, [NSThread currentThread]);
-//    @synchronized (self) {
-//        [self test];
-//    }
-    /// 主线程中销毁的话，则标记crash都会crash
-    
-    // crash
-//    TestDeallocModel *model = self;
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        [model test];
-//    });
-    
-    // crash：在dealloc方法中系统会去调用把weak指针置nil的操作。
-//    __weak typeof(self) weakSelf = self;
-    
-    // crash
-//    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-//        NSLog(@"async & global_queue %@", self);
-//        [self test];
-//    });
-    // 添加睡眠则不会crash
-//    sleep(3);
-    
-    // crash
-//    [self invalidateTimer];
-    
-    // crash 先执行完主线程代码，后执行主队列代码
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        /// self 已经是野指针？
-//        [self test];
-//    });
-//    sleep(3);
-//    NSLog(@"TestDeallocModel dealloc after async & main_queue");
-    // crash 主线程上同步执行主队列方法卡死
-    dispatch_sync(dispatch_get_main_queue(), ^{
-        [self test];
-    });
-    
-    // 此时不会crash，不管是主线程销毁还是子线程销毁
-    dispatch_sync(dispatch_get_global_queue(0, 0), ^{
-        [self test];
-    });
-    
-    // crash 主线程销毁，异步开启线程会导致crash
-//    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-//        [self test];
-//    });
-    
-    /*
-     performSelectorOnMainThread && dispatch_get_main_queue
-     */
-    [self performSelectorOnMainThread:@selector(test) withObject:nil waitUntilDone:YES];
-}
 
 - (instancetype)init {
     if (self = [super init]) {
@@ -93,18 +30,80 @@ static char *KTestDeallocAssociatedObjectKey = "KTestDeallocAssociatedObjectKey"
         }];
         objc_setAssociatedObject(self, &KTestDeallocAssociatedObjectKey, object, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         
-        // waitUntilDone YES 则等待完成后再往下执行
-//        [self performSelectorOnMainThread:@selector(test) withObject:nil waitUntilDone:NO];
-//
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            NSLog(@"---");
-//        });
+        [self fireTimer];
     }
     return self;
 }
 
+- (void)dealloc {
+    /// Recommended for debugging and logging purposes only:
+    NSLog(@"TestDeallocModel dealloc:%p, thread:%@, queue:%@", self, [NSThread currentThread], dispatch_get_current_queue());
+    
+//    [self testWeakSelf];
+
+    [self invalidateTimer];
+
+//    [self testGCD];
+
+//    [self testPerformSelectorOnMainThreadAndWait:YES];
+    
+}
+
+#pragma mark -
+#pragma mark - begin- Private Method
+
+- (void)testGCD {
+    [self testAsync:dispatch_queue_create("Kong", DISPATCH_QUEUE_CONCURRENT)];
+    
+    [self testAsync:dispatch_queue_create("Kong", DISPATCH_QUEUE_SERIAL)];
+    
+    [self testAsync:dispatch_get_global_queue(0, 0)];
+    
+    [self testAsync:dispatch_get_main_queue()];
+    
+    [self testSync:dispatch_queue_create("Kong", DISPATCH_QUEUE_CONCURRENT)];
+    
+    [self testSync:dispatch_queue_create("Kong", DISPATCH_QUEUE_SERIAL)];
+    
+    [self testSync:dispatch_get_global_queue(0, 0)];
+    
+    [self testSync:dispatch_get_main_queue()];
+}
+
+- (void)testAsync:(dispatch_queue_t)queue {
+    NSLog(@"async before");
+    dispatch_async(queue, ^{
+        NSLog(@"dispatch_async,%@", queue);
+        [self test];
+    });
+    NSLog(@"async after");
+}
+
+- (void)testSync:(dispatch_queue_t)queue {
+    NSLog(@"sync before");
+    dispatch_sync(queue, ^{
+        NSLog(@"dispatch_sync,%@", queue);
+        [self test];
+    });
+    NSLog(@"sync after");
+}
+
+- (void)testWeakSelf {
+    __weak typeof(self) weakSelf = self;
+    /// 模拟实际情况下的block处理，例如网络请求等，实际情况可能会隐藏得更深
+    void (^block)(void) = ^ {
+        [weakSelf test];
+    };
+    block();
+}
+
+- (void)testPerformSelectorOnMainThreadAndWait:(BOOL)wait {
+    [self performSelectorOnMainThread:@selector(test) withObject:nil waitUntilDone:wait];
+}
+
 - (void)test {
     NSLog(@"TestDeallocModel test !!! thread:%@", [NSThread currentThread]);
+    //    NSLog(@"TestDeallocModel test !!! thread:%@, self=%@", [NSThread currentThread], self);
 }
 
 - (void)fireTimer {
@@ -112,7 +111,7 @@ static char *KTestDeallocAssociatedObjectKey = "KTestDeallocAssociatedObjectKey"
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!weakSelf.timer) {
             weakSelf.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
-                NSLog(@"TestDeallocModel timer:%p model:%p", timer, weakSelf);
+                NSLog(@"TestDeallocModel timer:%p", timer);
             }];
             [[NSRunLoop currentRunLoop] addTimer:weakSelf.timer forMode:NSRunLoopCommonModes];
         }
@@ -121,12 +120,16 @@ static char *KTestDeallocAssociatedObjectKey = "KTestDeallocAssociatedObjectKey"
 
 - (void)invalidateTimer {
     dispatch_async(dispatch_get_main_queue(), ^{
+        //sleep(2);
         if (self.timer) {
-            NSLog(@"TestDeallocModel invalidateTimer:%p model:%p", self.timer, self);
+            NSLog(@"TestDeallocModel invalidateTimer:%p model:%p", self->_timer, self);
             [self.timer invalidate];
             self.timer = nil;
         }
     });
+    NSLog(@"---");
 }
+
+#pragma mark end- Private Method
 
 @end

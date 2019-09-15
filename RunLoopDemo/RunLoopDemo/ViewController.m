@@ -7,15 +7,14 @@
 //
 
 #import "ViewController.h"
-//#import "Person.h"
 #import "TestDeallocModel.h"
+#import "SubModel.h"
+#import "TestModel.h"
 
 UIKIT_EXTERN NSNotificationName const HYLiveAppDidEnterBackgroundNotification;
 
 @interface ViewController ()
 @property (nonatomic, strong) NSMutableArray *arrM;
-
-//@property (nonatomic, strong) Person *person;
 
 @property (nonatomic, strong) TestDeallocModel *propertyModel;
 
@@ -32,73 +31,20 @@ TestDeallocModel *globalModel;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-//    extern UIView *view0;
-//    NSLog(@"controller before %@", view0);
-//    view0 = [[UIView alloc] init];
-//    NSLog(@"controller after %@", view0);
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidEnterBackground:) name:HYLiveAppDidEnterBackgroundNotification object:nil];
-    
-//    Person<Chinese *> *person = [Person new];
-//    Chinese *chinese = [Chinese new];
-//    person = chinese;
-//    self.person = [Person new];
-//    self.arrM = [NSMutableArray array];
-//
-//    __weak typeof(self) weakSelf = self;
-//    NSTimer *timer = [NSTimer  scheduledTimerWithTimeInterval:1 repeats:YES block:^(NSTimer * _Nonnull timer) {
-//        [weakSelf test];
-//        NSLog(@"timer %zd, name:%@", weakSelf.arrM.count, weakSelf.person.name);
-//    }];
-//    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
-    
-//    self.btn = [[UIButton alloc] initWithFrame:CGRectMake(200, 300, 100, 100)];
-//    [self.btn setBackgroundColor:[UIColor blueColor]];
-//    [self.btn addTarget:self action:@selector(click) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:self.btn];
-    
-    
-//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//        [self click];
-//    });
-    if (!_semaphore) {
-        _semaphore = dispatch_semaphore_create(1);
-    }
-    
-//    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:1.0 repeats:YES block:^(NSTimer * _Nonnull timer) {
-//        dispatch_semaphore_wait(self->_semaphore, DISPATCH_TIME_FOREVER);
-//
-//        NSLog(@"index = %d", self->_index);
-//
-//        dispatch_semaphore_signal(self->_semaphore);
-//    }];
-//    [[NSRunLoop currentRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
-//
-//    NSTimer *timer1 = [NSTimer scheduledTimerWithTimeInterval:0.5 repeats:YES block:^(NSTimer * _Nonnull timer) {
-//        dispatch_async(dispatch_get_global_queue(0, 0), ^{
-////            for (int index = 0; index < 100; index++) {
-////                @autoreleasepool {
-////
-////                }
-////            }
-//            NSLog(@"step 1");
-//            dispatch_semaphore_wait(self->_semaphore, DISPATCH_TIME_FOREVER);
-//            NSLog(@"step 2");
-//            self->_index++;
-//
-//            dispatch_semaphore_signal(self->_semaphore);
-//            NSLog(@"step 3");
-//        });
-//    }];
-//    [[NSRunLoop currentRunLoop] addTimer:timer1 forMode:NSRunLoopCommonModes];
-    
-    
+    SubModel *model = [[SubModel alloc] init];
+    model.subName = @"kong";
+    model.temp = @"string";
+//  watchpoint set variable model->_temp
+    [model printMethodName:[SubModel class]];
+    [model printMethodName:[SubModel superclass]];
     
     NSLog(@"VC initModel thread:%@", [NSThread currentThread]);
     self.propertyModel = [[TestDeallocModel alloc] init];
     
     // 主线程销毁，则dealloc中使用dispatch_async 或者 dispatch_get_main_queue() 都会crash
+//    dispatch_get_global_queue(0, 0)、dispatch_get_main_queue()
     __weak typeof(self) weakSelf = self;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(0, 0), ^{
         [weakSelf releaseModel];
     });
     
@@ -126,35 +72,6 @@ TestDeallocModel *globalModel;
 
 - (void)appDidEnterBackground:(NSNotification *)notification {
     NSLog(@" back ground ");
-}
-
-- (void)test {
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        NSLog(@"thread:%@", [NSThread currentThread]);
-        for (int i = 0; i < 20; i++) {
-            @synchronized (self) {
-                [self.arrM addObject:@"1"];
-            }
-//            NSLog(@"1 %zd", self.arrM.count);
-//            self.person.name = @"1";
-        }
-    });
-    
-//    [self.arrM addObject:@"2"];
-    @synchronized (self) {
-        [self.arrM addObject:@"2"];
-    }
-//    self.person.name = @"2";
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        NSLog(@"thread:%@", [NSThread currentThread]);
-        for (int i = 0; i < 20; i++) {
-            @synchronized (self) {
-                [self.arrM addObject:@"3"];
-            }
-//            NSLog(@"3 %zd", self.arrM.count);
-//            self.person.name = @"3";
-        }
-    });
 }
 
 // 模拟器：libMobileGestalt MobileGestalt.c:890: MGIsDeviceOneOfType is not supported on this platform.
