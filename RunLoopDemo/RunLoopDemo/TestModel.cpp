@@ -98226,6 +98226,12 @@ static void _I_TestModel_weakSelfTest(TestModel * self, SEL _cmd) {
     __attribute__((objc_ownership(weak))) typeof(self) weakSelf = self;
 }
 
+
+
+
+
+
+
 /// clang 中8.7提到https://opensource.apple.com/source/clang/clang-211.10.1/src/tools/clang/docs/AutomaticReferenceCounting.html#runtime.objc_initWeak
 /*
  8.7. id objc_initWeak(id *object, id value);

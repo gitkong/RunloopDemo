@@ -20,6 +20,20 @@ static char *KTestDeallocAssociatedObjectKey = "KTestDeallocAssociatedObjectKey"
 
 @implementation TestDeallocModel
 
+- (void)dealloc {
+    /// Recommended for debugging and logging purposes only:
+    NSLog(@"TestDeallocModel dealloc:%p, thread:%@, queue:%@", self, [NSThread currentThread], dispatch_get_current_queue());
+    
+//    [self testWeakSelf];
+    
+    [self invalidateTimer];
+    
+//    [self testGCD];
+    
+//    [self testPerformSelectorOnMainThreadAndWait:YES];
+    
+}
+
 - (instancetype)init {
     if (self = [super init]) {
         NSLog(@"TestDeallocModel init:%p thread:%@", self, [NSThread currentThread]);
@@ -33,20 +47,6 @@ static char *KTestDeallocAssociatedObjectKey = "KTestDeallocAssociatedObjectKey"
         [self fireTimer];
     }
     return self;
-}
-
-- (void)dealloc {
-    /// Recommended for debugging and logging purposes only:
-    NSLog(@"TestDeallocModel dealloc:%p, thread:%@, queue:%@", self, [NSThread currentThread], dispatch_get_current_queue());
-    
-//    [self testWeakSelf];
-
-    [self invalidateTimer];
-
-//    [self testGCD];
-
-//    [self testPerformSelectorOnMainThreadAndWait:YES];
-    
 }
 
 #pragma mark -

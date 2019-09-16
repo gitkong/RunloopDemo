@@ -23,19 +23,18 @@
 
 @end
 
-@implementation SubModel
+@implementation SubModel// 继承自BaseModel
 
 - (void)dealloc {
     NSLog(@"SubModel dealloc");
-    self.subName = nil;
+    self.baseName = nil;
+//    [self performSelectorWhenDealloc];
 }
 
 - (void)setBaseName:(NSString *)baseName {
     [super setBaseName:baseName];
-//    NSLog(@"SubModel setBaseName:%@", [NSString stringWithString:_subName]);
+    NSLog(@"SubModel setBaseName:%@", [NSString stringWithString:_subName]);
 }
-
-
 
 
 /// 重写setter和getter就需要自定义实例变量（非property），不定义则没有.cxx_destruct方法
@@ -58,4 +57,16 @@
     }
 }
 
+- (void)performSelectorWhenDealloc {
+    __weak typeof(self) weakSelf = self;
+    // 模拟复杂的block结构，需要弱引用解除循环引用
+    void (^block)(void) = ^ {
+        [weakSelf test];
+    };
+    block();
+}
+
+- (void)test {
+    
+}
 @end
