@@ -44,7 +44,7 @@ TestDeallocModel *globalModel;
     // 主线程销毁，则dealloc中使用dispatch_async 或者 dispatch_get_main_queue() 都会crash
 //    dispatch_get_global_queue(0, 0)、dispatch_get_main_queue()
     __weak typeof(self) weakSelf = self;
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_global_queue(0, 0), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [weakSelf releaseModel];
     });
     

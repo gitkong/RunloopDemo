@@ -26,7 +26,7 @@ static char *KTestDeallocAssociatedObjectKey = "KTestDeallocAssociatedObjectKey"
     
 //    [self testWeakSelf];
     
-    [self invalidateTimer];
+//    [self invalidateTimer];
     
 //    [self testGCD];
     

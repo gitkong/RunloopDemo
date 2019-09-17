@@ -27,13 +27,13 @@
 
 - (void)dealloc {
     NSLog(@"SubModel dealloc");
-    self.baseName = nil;
+    self.subName = nil;
 //    [self performSelectorWhenDealloc];
 }
 
 - (void)setBaseName:(NSString *)baseName {
     [super setBaseName:baseName];
-    NSLog(@"SubModel setBaseName:%@", [NSString stringWithString:_subName]);
+//    NSLog(@"SubModel setBaseName:%@", [NSString stringWithString:_subName]);
 }
 
 
