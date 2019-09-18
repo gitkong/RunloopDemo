@@ -44,7 +44,7 @@ static char *KTestDeallocAssociatedObjectKey = "KTestDeallocAssociatedObjectKey"
         }];
         objc_setAssociatedObject(self, &KTestDeallocAssociatedObjectKey, object, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         
-        [self fireTimer];
+//        [self fireTimer];
     }
     return self;
 }
@@ -53,18 +53,18 @@ static char *KTestDeallocAssociatedObjectKey = "KTestDeallocAssociatedObjectKey"
 #pragma mark - begin- Private Method
 
 - (void)testGCD {
-    [self testAsync:dispatch_queue_create("Kong", DISPATCH_QUEUE_CONCURRENT)];
-    
-    [self testAsync:dispatch_queue_create("Kong", DISPATCH_QUEUE_SERIAL)];
-    
-    [self testAsync:dispatch_get_global_queue(0, 0)];
-    
-    [self testAsync:dispatch_get_main_queue()];
-    
+//    [self testAsync:dispatch_queue_create("Kong", DISPATCH_QUEUE_CONCURRENT)];
+//
+//    [self testAsync:dispatch_queue_create("Kong", DISPATCH_QUEUE_SERIAL)];
+//
+//    [self testAsync:dispatch_get_global_queue(0, 0)];
+//
+//    [self testAsync:dispatch_get_main_queue()];
+//
     [self testSync:dispatch_queue_create("Kong", DISPATCH_QUEUE_CONCURRENT)];
-    
+
     [self testSync:dispatch_queue_create("Kong", DISPATCH_QUEUE_SERIAL)];
-    
+
     [self testSync:dispatch_get_global_queue(0, 0)];
     
     [self testSync:dispatch_get_main_queue()];
@@ -73,7 +73,7 @@ static char *KTestDeallocAssociatedObjectKey = "KTestDeallocAssociatedObjectKey"
 - (void)testAsync:(dispatch_queue_t)queue {
     NSLog(@"async before");
     dispatch_async(queue, ^{
-        NSLog(@"dispatch_async,%@", queue);
+        NSLog(@"dispatch_async,%@, thread:%@", queue, [NSThread currentThread]);
         [self test];
     });
     NSLog(@"async after");
@@ -82,7 +82,7 @@ static char *KTestDeallocAssociatedObjectKey = "KTestDeallocAssociatedObjectKey"
 - (void)testSync:(dispatch_queue_t)queue {
     NSLog(@"sync before");
     dispatch_sync(queue, ^{
-        NSLog(@"dispatch_sync,%@", queue);
+        NSLog(@"dispatch_sync,%@, thread:%@", queue, [NSThread currentThread]);
         [self test];
     });
     NSLog(@"sync after");
